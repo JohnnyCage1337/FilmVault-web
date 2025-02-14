@@ -1,0 +1,263 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    background: radial-gradient(90.53% 90.53% at 50% 9.47%, #291A36 0%, #110120 100%);
+    color: white;
+    font-family: "Roboto", sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: 1em 0;
+    background-color: #241531;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+header a{
+    text-decoration: none;
+    color: white;
+    font-weight: 600;
+    font-size: 1.4em;
+    border-radius: 10px;
+    margin: 1em;
+    padding: 0.5em;
+}
+
+.logo img {
+    max-height: 70px;
+    margin-left: 1em;
+}
+header form {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+}
+
+header form input {
+    width: 60%;
+    max-width: 60em;
+    line-height: 2em;
+    border-radius: 5px;
+    padding: 0.5em;
+    border: none;
+}
+
+.user, .guest {
+    display: flex;
+    gap: 1em;
+    margin-right: 5em;
+
+}
+
+@media (max-width: 900px) {
+    header {
+        flex-direction: column;
+        align-items: center;
+        padding: 1em;
+    }
+
+    header form {
+        width: 100%;
+    }
+
+    header form input {
+        width: 80%;
+    }
+
+    .user, .guest {
+        font-size: 1em;
+        margin-top: 10px;
+    }
+}
+
+main {
+    flex-grow: 1;
+    padding: 2em;
+}
+
+.movie-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px;
+    gap: 30px;
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.poster {
+    flex: 0 0 400px;
+    max-width: 400px;
+}
+
+.poster img {
+    width: 100%;
+    height: auto;
+    max-height: 600px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.movie-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+@media (max-width: 900px) {
+    .movie-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .poster {
+        max-width: 100%;
+    }
+
+    .movie-details {
+        width: 100%;
+        max-width: 600px;
+        text-align: left;
+    }
+}
+
+.movie-details h1 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.genre {
+    color: #f2d13c;
+    font-weight: bold;
+}
+
+.rating i {
+    color: #f2d13c;
+    font-size: 20px;
+}
+
+.bookmark {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.casts {
+    width: 100%;
+    padding: 40px 0;
+    margin-top: 40px;
+    text-align: center;
+}
+
+.casts h2 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.cast-list {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 40px;
+    justify-content: center;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.cast {
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.cast img {
+    width: 160px;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+@media (max-width: 1200px) {
+    .cast-list {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .cast-list {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .cast-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .cast-list {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
+
+
+
+footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1em 10em;
+    margin-top: auto;
+}
+
+footer a {
+    text-decoration: none;
+    color: white;
+    margin: 0.5em;
+    font-size: 1.1em;
+}
+
+footer {
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    padding: 1em;
+    margin-top: auto;
+}
+
+footer nav {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 0.5em 0;
+}
+
+footer a {
+    text-decoration: none;
+    color: white;
+    margin: 0.5em;
+    font-size: 1.2em;
+}
+.nav-media,
+.policies {
+    list-style-type: none;
+    display: flex;
+    gap: 1em;
+    padding: 0;
+    margin: 0;
+}

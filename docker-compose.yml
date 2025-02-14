@@ -1,0 +1,31 @@
+#konfiugracje skladajce sie z 2 obrazow nginx i php. umiescimy je w docker file
+#wersja dockera
+
+# version: '3'
+
+#definowanie serwisów, których konfiguracje utworzylismy w folderze docker
+services:
+  web:
+    
+    #zaczynamy od określenia w jaki sposob bedzie budowany serwer, np. wskazujac plik do Dockerfile
+    build:
+      #określa z którego miejsca ma sobie odczytac ponizsza sciezke
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+    
+    ports:
+      #backend stron internetowych jest zwykle uruchamiany na portach 80
+      - "8080:80"
+    #wybor zasobow projektu, ktore beda uzywane na stronie
+    volumes:
+      - .:/app/
+    #zaleznosci pomiedzy kontenerami
+    links:
+      - php
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    volumes:
+      - .:/app/
+    
