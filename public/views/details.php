@@ -16,7 +16,7 @@
 <body>
 <header>
     <div class="logo">
-        <img src="public/img/logo.svg" alt="Logo">
+        <a href="dashboard"><img src="public\img\logo.svg"></a>
     </div>
     <form id="searchForm" method="get" action="search">
         <input type="search" name="q" placeholder="search project">

@@ -32,6 +32,10 @@ Serwis zawierający informacje o filmach. Pozwala użytkownikom na wyszukiwanie 
 2. Uruchomić docker-compose.yaml
 3. Utworzyc konto lub zalogowac sie na konto admina: mail: admin@admin.me haslo: admin
 
+
+## Dodawanie filmow:
+Aby dodać film, wcześniej nalezy dodac do bazy aktorow/scenarzystow/rezyserow, ktorzy biora udzial w filmie.
+
 ## Niedokonczone:
 1. Usuwanie filmów z watchlisty
 2. modyfikowanie osób/filmów oraz usuwanie

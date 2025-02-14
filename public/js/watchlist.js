@@ -1,4 +1,6 @@
-const bookmarkButton = document.querySelectorAll(".fa-bookmark");
+const main = document.querySelector("main");
+const bookmarkButton = main.querySelector(".fa-bookmark");
+
 
 function addToWatchList() {
     const bookmarked = this;
@@ -15,7 +17,7 @@ function addToWatchList() {
             } else if (status === 400) {
                 alert("Error: Niepoprawne żądanie.");
             } else if (status === 500) {
-                alert("Error" + body.error);
+                alert("Error:" + " Already bookmarked.");
             }
         })
         .catch(error => {
@@ -25,7 +27,7 @@ function addToWatchList() {
 }
 
 
-bookmarkButton.forEach((button) => {
-  button.addEventListener("click", addToWatchList);
-});
+
+    bookmarkButton.addEventListener("click", addToWatchList);
+
 
