@@ -18,7 +18,7 @@ class UserRepository extends Repository
             return null;
         }
 
-        $result = new User( $user['email'], $user['password'], $user['username']);
+        $result = new User( $user['email'], $user['password'], $user['name']);
         $result->setId($user['id']);
         $result->setRole($user['role']);
 
@@ -37,7 +37,7 @@ class UserRepository extends Repository
             return null;
         }
 
-        $result = new User( $user['email'], $user['password'], $user['username']);
+        $result = new User( $user['email'], $user['password'], $user['name']);
         $result->setId($user['id']);
         $result->setRole($user['role']);
 
@@ -46,7 +46,7 @@ class UserRepository extends Repository
 
     public function addUser(User $user){
         $stmt = $this->db->connect()->prepare("
-        INSERT INTO users (username, email, password, role)
+        INSERT INTO users (name, email, password, role)
         VALUES (?,?,?,?)");
 
         $stmt->execute([
@@ -59,8 +59,8 @@ class UserRepository extends Repository
 
     public function addFilmToWatchlist(int $userId, int $filmId){
         $stmt = $this->db->connect()->prepare("
-    INSERT INTO watchlist (user_id, film_id, date_added, watched)
-    VALUES (?, ?, CURRENT_TIMESTAMP, false)");
+    INSERT INTO user_watchlist (user_id, film_id)
+    VALUES (?, ?)");
 
         $stmt->execute([$userId, $filmId]);
     }

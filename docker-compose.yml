@@ -6,13 +6,13 @@
 #definowanie serwisów, których konfiguracje utworzylismy w folderze docker
 services:
   web:
-    
+
     #zaczynamy od określenia w jaki sposob bedzie budowany serwer, np. wskazujac plik do Dockerfile
     build:
       #określa z którego miejsca ma sobie odczytac ponizsza sciezke
       context: .
       dockerfile: docker/nginx/Dockerfile
-    
+
     ports:
       #backend stron internetowych jest zwykle uruchamiany na portach 80
       - "8080:80"
@@ -28,4 +28,20 @@ services:
       dockerfile: docker/php/Dockerfile
     volumes:
       - .:/app/
-    
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: filmvault
+      POSTGRES_USER: filmvault_user
+      POSTGRES_PASSWORD: filmvault_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/db/init:/docker-entrypoint-initdb.d
+
+volumes:
+  postgres_data:

@@ -163,8 +163,8 @@ class FilmRepository extends Repository
     {
         try {
             $stmt = $this->db->connect()->prepare("
-            INSERT INTO watchlist (user_id, film_id, date_added, watched)
-            VALUES (?, ?, CURRENT_TIMESTAMP, false)
+            INSERT INTO user_watchlist (user_id, film_id)
+            VALUES (?, ?)
         ");
             $stmt->execute([$userId, $filmId]);
         } catch (PDOException $e) {
@@ -208,11 +208,17 @@ class FilmRepository extends Repository
 
     public function getFilmsByWatchlist(int $userId){
         try{
-            $stmt = $this->db->connect()->prepare("SELECT * FROM watchlist_view WHERE user_id = :user_id");
+            $stmt = $this->db->connect()->prepare("
+                SELECT f.*
+                FROM films f
+                JOIN user_watchlist uw ON f.id = uw.film_id
+                WHERE uw.user_id = :user_id
+            ");
             $stmt->bindParam(":user_id", $userId, PDO::PARAM_INT);
             $stmt->execute();
 
             $films = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $result = [];
             foreach ($films as $film) {
                 $filmModel = new Film(
                     $film['title'],
@@ -222,7 +228,7 @@ class FilmRepository extends Repository
                     $film['description'],
                     (float)$film['rating']
                 );
-                $filmModel->setId((int)$film['film_id']);
+                $filmModel->setId((int)$film['id']);
                 $result[] = $filmModel;
             }
             return $result;
@@ -261,8 +267,8 @@ class FilmRepository extends Repository
 
     public function isPeopleInDataBase(string $firstName, string $lastName): bool {
         $stmt = $this->db->connect()->prepare(
-            "SELECT * FROM people 
-         WHERE LOWER(first_name) = LOWER(:firstName) 
+            "SELECT * FROM people
+         WHERE LOWER(first_name) = LOWER(:firstName)
            AND LOWER(last_name) = LOWER(:lastName)"
         );
         $stmt->bindParam(':firstName', $firstName, PDO::PARAM_STR);
@@ -337,7 +343,8 @@ class FilmRepository extends Repository
 
     public function getFilmDetailsById(int $id): ?Film
     {
-        $stmt = $this->db->connect()->prepare("SELECT * FROM film_details WHERE film_id = :id");
+        // Pobierz podstawowe dane filmu
+        $stmt = $this->db->connect()->prepare("SELECT * FROM films WHERE id = :id");
         $stmt->bindParam(":id", $id, PDO::PARAM_INT);
         $stmt->execute();
 
@@ -347,48 +354,58 @@ class FilmRepository extends Repository
             return null;
         }
 
+        // Pobierz obsadę filmu z rolami
+        $stmt = $this->db->connect()->prepare("
+            SELECT p.id, p.first_name, p.last_name, p.image, fp.role as role_name, fp.character_name
+            FROM film_people fp
+            JOIN people p ON fp.person_id = p.id
+            WHERE fp.film_id = :film_id
+        ");
+        $stmt->bindParam(":film_id", $id, PDO::PARAM_INT);
+        $stmt->execute();
+        $castData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Pobierz gatunki filmu
+        $stmt = $this->db->connect()->prepare("
+            SELECT g.name
+            FROM film_genres fg
+            JOIN genres g ON fg.genre_id = g.id
+            WHERE fg.film_id = :film_id
+        ");
+        $stmt->bindParam(":film_id", $id, PDO::PARAM_INT);
+        $stmt->execute();
+        $genresData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
         $actors = [];
         $directors = [];
         $writers = [];
 
-        if (!empty($filmData['cast'])) {
-            $castEntries = explode(";", $filmData['cast']);
+        foreach ($castData as $cast) {
+            $person = new Person(
+                $cast['first_name'],
+                $cast['last_name'],
+                null,
+                null,
+                $cast['image'],
+                (int)$cast['id']
+            );
 
-            foreach ($castEntries as $entry) {
-                $data = explode("|", $entry);
-
-
-                if (count($data) < 5) {
-                    continue;
-                }
-
-                $role = $data[0];
-                $personId = (int)$data[1];
-                $firstName = $data[2];
-                $lastName = $data[3];
-                $image = !empty($data[4]) ? $data[4] : null;
-                $roleFirstName = $data[5] ?? null;
-                $roleLastName = $data[6] ?? null;
-
-                $person = new Person($firstName, $lastName, null, null, $image, $personId);
-
-                if ($role === "actor") {
-                    $actors[] = new PersonFilm($person, $roleFirstName, $roleLastName);
-                } elseif ($role === "director") {
-                    $directors[] = $person;
-                } elseif ($role === "screenwriter") {
-                    $writers[] = $person;
-                }
+            if ($cast['role_name'] === "actor") {
+                $actors[] = new PersonFilm($person, $cast['character_name'], null);
+            } elseif ($cast['role_name'] === "director") {
+                $directors[] = $person;
+            } elseif ($cast['role_name'] === "screenwriter" || $cast['role_name'] === "writer") {
+                $writers[] = $person;
             }
         }
 
-        $categories = !empty($filmData['categories']) ? explode(", ", $filmData['categories']) : [];
+        $categories = array_map(function($genre) { return $genre['name']; }, $genresData);
 
         $film = new Film(
             $filmData['title'],
             (int)$filmData['release_year'],
             (int)$filmData['duration'],
-            $filmData['film_image'],
+            $filmData['image'],
             $filmData['description'],
             (float)$filmData['rating'],
             $actors,
@@ -397,7 +414,7 @@ class FilmRepository extends Repository
             $categories
         );
 
-        $film->setId((int)$filmData['film_id']);
+        $film->setId((int)$filmData['id']);
 
         return $film;
     }

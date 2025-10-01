@@ -96,7 +96,9 @@
                          alt="<?= htmlspecialchars($person->getFirstName() . ' ' . $person->getLastName()); ?>">
 
                     <p class="cast-name"><?= htmlspecialchars($person->getFirstName() . ' ' . $person->getLastName()); ?></p>
-                    <p class="role"><?= htmlspecialchars($characterFullName); ?></p>
+                    <?php if (!empty($characterFullName)): ?>
+                        <p class="role"><?= htmlspecialchars($characterFullName); ?></p>
+                    <?php endif; ?>
                 </div>
             <?php endforeach; ?>
         </div>

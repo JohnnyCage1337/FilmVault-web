@@ -7,7 +7,7 @@ class SessionRepository extends Repository
     public function saveSession($userId, $token, $expiryTime)
     {
         $stmt = $this->db->connect()->prepare("
-            INSERT INTO sessions (session_id, user_id, expires_at)
+            INSERT INTO user_sessions (session_token, user_id, expires_at)
             VALUES (:session_id, :user_id, :expires_at)
         ");
         $stmt->bindValue(":session_id", $token);
@@ -17,7 +17,7 @@ class SessionRepository extends Repository
     }
 
     public function getSession($token) {
-        $stmt = $this->db->connect()->prepare("SELECT user_id, expires_at FROM sessions WHERE session_id = :token");
+        $stmt = $this->db->connect()->prepare("SELECT user_id, expires_at FROM user_sessions WHERE session_token = :token");
         $stmt->bindParam(':token', $token);
         $stmt->execute();
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -32,7 +32,7 @@ class SessionRepository extends Repository
     public function deleteSession($token)
     {
         $stmt = $this->db->connect()->prepare("
-            DELETE FROM sessions WHERE session_id = :session_id
+            DELETE FROM user_sessions WHERE session_token = :session_id
         ");
         $stmt->bindValue(":session_id", $token);
         return $stmt->execute();
@@ -41,7 +41,7 @@ class SessionRepository extends Repository
 
     public function updateSessionExpiry($token, $newExpiry) {
         $stmt = $this->db->connect()->prepare("
-            UPDATE sessions SET expires_at = :expires_at WHERE session_id = :session_id
+            UPDATE user_sessions SET expires_at = :expires_at WHERE session_token = :session_id
         ");
         $stmt->bindValue(":expires_at", date('Y-m-d H:i:s', $newExpiry));
         $stmt->bindValue(":session_id", $token);
